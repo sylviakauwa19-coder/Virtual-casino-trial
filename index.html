@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>Trial Casino</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b1020;
+  color: white;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 480px;
+  margin: auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #aab3c5;
+  margin-top: 8px;
+}
+
+.balance {
+  background: #171f35;
+  border: 1px solid #34415e;
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+}
+
+.balance-label {
+  color: #aab3c5;
+  font-size: 13px;
+}
+
+.amount {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+h2 {
+  margin-top: 28px;
+}
+
+.machine {
+  background: #151d32;
+  border: 1px solid #34415e;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.reels {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 10px 0 20px;
+}
+
+.reel {
+  width: 30%;
+  height: 85px;
+  background: white;
+  color: black;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 40px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  width: 110px;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1px solid #45516c;
+  background: #0e1527;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  font-weight: bold;
+  font-size: 16px;
+  background: #eab308;
+  color: black;
+}
+
+.message {
+  text-align: center;
+  margin-top: 16px;
+  min-height: 25px;
+  font-weight: bold;
+}
+
+.rules {
+  color: #9da8bc;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 25px;
+  line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="logo">🎰 Trial Casino</div>
+  <div class="subtitle">Virtual Credits Only</div>
+</header>
+
+<div class="balance">
+  <div class="balance-label">YOUR BALANCE</div>
+  <div class="amount">
+    <span id="balance">10,000</span> Credits
+  </div>
+</div>
+
+<h2>🎰 Slot Machine</h2>
+
+<section class="machine">
+
+  <div class="reels">
+    <div class="reel" id="r1">🍒</div>
+    <div class="reel" id="r2">🍋</div>
+    <div class="reel" id="r3">⭐</div>
+  </div>
+
+  <div class="controls">
+    <input
+      id="bet"
+      type="number"
+      min="10"
+      step="10"
+      value="100"
+    >
+
+    <button id="spin">SPIN</button>
+  </div>
+
+  <div class="message" id="message">
+    Good luck!
+  </div>
+
+</section>
+
+<div class="rules">
+  Every player starts with 10,000 free credits.
+  Credits have no cash value and cannot be withdrawn
+  or exchanged for money.
+</div>
+
+</div>
+
+<script>
+
+let balance = 10000;
+
+const symbols = [
+  "🍒",
+  "🍋",
+  "🍊",
+  "🔔",
+  "⭐",
+  "7️⃣"
+];
+
+const balanceDisplay =
+  document.getElementById("balance");
+
+const message =
+  document.getElementById("message");
+
+function renderBalance() {
+  balanceDisplay.textContent =
+    balance.toLocaleString();
+}
+
+document.getElementById("spin").onclick = function() {
+
+  const bet = Math.floor(
+    Number(document.getElementById("bet").value)
+  );
+
+  if (!Number.isFinite(bet) || bet < 10) {
+    message.textContent =
+      "Minimum bet is 10 credits.";
+    return;
+  }
+
+  if (bet > balance) {
+    message.textContent =
+      "Not enough credits.";
+    return;
+  }
+
+  balance -= bet;
+
+  const reels = [
+    symbols[Math.floor(Math.random() * symbols.length)],
+    symbols[Math.floor(Math.random() * symbols.length)],
+    symbols[Math.floor(Math.random() * symbols.length)]
+  ];
+
+  document.getElementById("r1").textContent = reels[0];
+  document.getElementById("r2").textContent = reels[1];
+  document.getElementById("r3").textContent = reels[2];
+
+  let win = 0;
+
+  if (
+    reels[0] === reels[1] &&
+    reels[1] === reels[2]
+  ) {
+    win = bet * 5;
+  }
+  else if (
+    reels[0] === reels[1] ||
+    reels[1] === reels[2] ||
+    reels[0] === reels[2]
+  ) {
+    win = bet * 2;
+  }
+
+  balance += win;
+
+  renderBalance();
+
+  if (win > 0) {
+    message.textContent =
+      "You won " + win.toLocaleString() + " credits!";
+  }
+  else {
+    message.textContent =
+      "You lost " + bet.toLocaleString() + " credits.";
+  }
+
+};
+
+renderBalance();
+
+</script>
+
+</body>
+  </html>
+
